@@ -1,0 +1,49 @@
+---
+title: "CAMIS - A PHUSE DVOST Working Group"
+---
+
+# Introduction
+
+Several discrepancies have been discovered in statistical analysis results between different programming languages, even in fully qualified statistical computing environments. Subtle differences exist between the fundamental approaches implemented by each language, yielding differences in results which are each correct in their own right. The fact that these differences exist causes unease on the behalf of sponsor companies when submitting to a regulatory agency, as it is uncertain if the agency will view these differences as problematic. In its Statistical Software Clarifying Statement, the US Food and Drug Administration (FDA) states that it "FDA does not require use of any specific software for statistical analyses" and that "the computer software used for data management and statistical analysis should be reliable." Observing differences across languages can reduce the analyst's confidence in reliability and, by understanding the source of any discrepancies, one can reinstate confidence in reliability.
+
+### Motivation
+
+The goal of this project is to demystify conflicting results between software and to help ease the transitions to new languages by providing comparison and comprehensive explanations.
+
+### Repository
+
+The repository below provides examples of statistical methodology in different software and languages, along with a comparison of the results obtained and description of any discrepancies.
+
+```{r}
+#| echo: false
+#| message : false
+library(gt)
+library(tidyverse)
+method_tbl <- read_csv("data/stat_method_tbl.csv", show_col_types = FALSE) |> 
+  pivot_longer(cols = ends_with("links")) %>% 
+  mutate(link_name = str_extract(value, "(?<=^\\[).*(?=\\])"),
+         link_loc = str_extract(value, "(?<=\\().*(?=\\)$)"),
+         link = if_else(!is.na(value), 
+                        paste0('<a href=\"https://psiaims.github.io/CAMIS/',
+                       link_loc,
+                       '.html">',
+                       link_name, 
+                       '</a>'), 
+                       "")) |> 
+  select(-value, -link_name, -link_loc) |>
+  pivot_wider(names_from = name, values_from = link) |>
+  mutate(across(ends_with("links"), ~map(., html)))
+
+
+gt(method_tbl, groupname_col = "method_grp",
+   rowname_col = "method_subgrp") |> 
+      tab_options(row_group.as_column = TRUE) |>
+    cols_label(method_subgrp = "Methods", 
+               r_links = "R", 
+               sas_links = "SAS", 
+               python_links = "Python",
+               comparison_links = "Comparison") |>
+  tab_stubhead("Methods") 
+  
+
+```
