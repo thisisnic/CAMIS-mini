@@ -2,7 +2,7 @@
 title: "CMH Test"
 ---
 
-# Cochran-Mantel-Haenszel Test
+# Cochran-Mantel-Haenszel Test 
 
 The CMH procedure tests for conditional independence in partial contingency tables for a 2 x 2 x K design. However, it can be generalized to tables of X x Y x K dimensions.
 
